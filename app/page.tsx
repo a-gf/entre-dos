@@ -98,7 +98,7 @@ export default function Home() {
   const percent = useMemo(() => Math.round((step / questions.length) * 100), [step]);
 
   function begin() {
-    setStarted(true); setResultKey(null); setStep(0); setAnswers([]);
+    setStarted(true); setResultKey(null); setStep(0); setAnswers([]); setSendState("idle"); setEmail(""); setConsent(false);
     setTimeout(() => document.getElementById("diagnostico")?.scrollIntoView({ behavior: "smooth" }), 50);
   }
 
@@ -112,7 +112,7 @@ export default function Home() {
     } else setStep(step + 1);
   }
 
-  async function sendReport(e: React.FormEvent) {
+  async function unlockReport(e: React.FormEvent) {
     e.preventDefault();
     if (!resultKey || !email) return;
     setSendState("loading");
@@ -163,19 +163,18 @@ export default function Home() {
         <div className="result-heading"><p className="eyebrow">Tu perfil orientativo</p><h2>{result.title}</h2><p className="result-kicker">{result.kicker}</p><p>{result.summary}</p></div>
         <div className="report-grid">
           <article className="strength"><span>Lo que ya tienen a favor</span><h3>{result.strength}</h3></article>
-          <article><span>Señales para observar</span><ul>{result.signals.map(x => <li key={x}>{x}</li>)}</ul></article>
+          {sendState === "success" ? <article><span>Señales para observar</span><ul>{result.signals.map(x => <li key={x}>{x}</li>)}</ul></article> : <article><span>Tu informe continúa</span><h3>Descubre las señales, tres ejercicios y tu plan de 7 días.</h3></article>}
         </div>
-        <div className="exercises"><p className="eyebrow">Tres ejercicios para empezar</p><div>{result.exercises.map((x, i) => <article key={x.title}><b>0{i + 1}</b><h3>{x.title}</h3><p>{x.text}</p></article>)}</div></div>
-        <div className="week"><span>Tu recomendación para los próximos 7 días</span><p>{result.week}</p></div>
-        <div className="email-card">
-          <div><p className="eyebrow">Guarda este momento</p><h2>Recibe una copia del informe</h2><p>Te enviaremos este resultado y los ejercicios. El informe completo ya es tuyo; dejar el correo es opcional.</p></div>
-          {sendState === "success" ? <div className="success"><b>✓ Informe solicitado</b><p>Revisa tu bandeja de entrada. También puedes conservar esta página.</p></div> : <form onSubmit={sendReport}><label htmlFor="email">Tu correo</label><div className="input-row"><input id="email" type="email" required placeholder="nombre@correo.com" value={email} onChange={e => setEmail(e.target.value)} /><button disabled={sendState === "loading"}>{sendState === "loading" ? "Enviando…" : "Enviar informe"}</button></div><label className="check"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} /> Quiero recibir información sobre recursos y consultas. Es opcional.</label>{sendState === "error" && <p className="error">No pudimos enviarlo ahora. Tu resultado sigue disponible en esta página.</p>}</form>}
-        </div>
+        {sendState !== "success" && <div className="email-card">
+          <div><p className="eyebrow">Desbloquea tu informe</p><h2>Recibe el resultado completo aquí mismo</h2><p>Deja tu correo para acceder a las señales, los ejercicios y tu recomendación personalizada. No enviaremos ningún correo y no guardamos tus respuestas.</p></div>
+          <form onSubmit={unlockReport}><label htmlFor="email">Tu correo</label><div className="input-row"><input id="email" type="email" required placeholder="nombre@correo.com" value={email} onChange={e => setEmail(e.target.value)} /><button disabled={sendState === "loading"}>{sendState === "loading" ? "Guardando…" : "Ver informe completo"}</button></div><label className="check"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} /> Quiero recibir información sobre recursos y consultas en el futuro. Es opcional.</label>{sendState === "error" && <p className="error">No pudimos guardar el dato ahora. Inténtalo nuevamente.</p>}</form>
+        </div>}
+        {sendState === "success" && <><div className="exercises"><p className="eyebrow">Tres ejercicios para empezar</p><div>{result.exercises.map((x, i) => <article key={x.title}><b>0{i + 1}</b><h3>{x.title}</h3><p>{x.text}</p></article>)}</div></div><div className="week"><span>Tu recomendación para los próximos 7 días</span><p>{result.week}</p></div><div className="success"><b>✓ Informe completo desbloqueado</b><p>Tu correo quedó registrado. No te enviaremos el informe ni mensajes promocionales salvo que hayas marcado el consentimiento opcional.</p></div></>}
         <button className="restart" onClick={begin}>Volver a realizar el diagnóstico</button>
       </section>}
 
       <section className="how" id="como-funciona"><p className="eyebrow">Cómo funciona</p><h2>Un espacio breve para mirar la conversación con otros ojos.</h2><div><article><b>01</b><h3>Responde con honestidad</h3><p>Diez preguntas sobre situaciones cotidianas. No pedimos nombres ni detalles íntimos.</p></article><article><b>02</b><h3>Conoce el patrón</h3><p>El resultado se calcula en tu navegador y aparece inmediatamente.</p></article><article><b>03</b><h3>Prueba algo pequeño</h3><p>Recibe ejercicios y una acción concreta para los próximos siete días.</p></article></div></section>
-      <section className="privacy" id="privacidad"><div><p className="eyebrow">Privacidad y cuidado</p><h2>La relación es de ustedes. Las respuestas también.</h2></div><div><p>No almacenamos las respuestas individuales del cuestionario. Si solicitas el informe por correo, guardamos únicamente el correo, el perfil obtenido, el consentimiento y la fecha.</p><p>Esta herramienta es educativa y orientativa. No diagnostica ni reemplaza terapia psicológica. Si hay violencia, amenazas o riesgo inmediato, busca apoyo profesional o comunícate con los servicios de emergencia de tu país.</p></div></section>
+      <section className="privacy" id="privacidad"><div><p className="eyebrow">Privacidad y cuidado</p><h2>La relación es de ustedes. Las respuestas también.</h2></div><div><p>No almacenamos las respuestas individuales del cuestionario. Para desbloquear el informe completo, guardamos únicamente el correo, el perfil obtenido, el consentimiento y la fecha. No enviamos mensajes sin consentimiento.</p><p>Esta herramienta es educativa y orientativa. No diagnostica ni reemplaza terapia psicológica. Si hay violencia, amenazas o riesgo inmediato, busca apoyo profesional o comunícate con los servicios de emergencia de tu país.</p></div></section>
       <footer><a className="brand" href="#inicio">Entre Dos</a><p>Una invitación a conversar, no una etiqueta.</p><small>© 2026 Entre Dos · Herramienta educativa</small></footer>
     </main>
   );
