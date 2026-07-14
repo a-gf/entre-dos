@@ -8,6 +8,8 @@ create table if not exists public.relationship_assessments (
 
 alter table public.relationship_assessments enable row level security;
 
+grant insert on table public.relationship_assessments to anon;
+
 create policy "Allow anonymous assessment inserts"
 on public.relationship_assessments for insert
 to anon
