@@ -26,7 +26,7 @@ const questions = [
 
 const profiles: Record<ProfileKey, {
   title: string; kicker: string; summary: string; strength: string;
-  signals: string[]; exercises: { title: string; text: string }[]; week: string;
+  signals: string[]; exercises: { title: string; text: string }[]; weekPlan: string[];
 }> = {
   connection: {
     title: "Conexión consciente", kicker: "Hay una base valiosa para seguir creciendo",
@@ -38,7 +38,15 @@ const profiles: Record<ProfileKey, {
       { title: "Aprecio específico", text: "Nombren una acción concreta del otro que agradecieron durante el día." },
       { title: "Revisión semanal", text: "Reserven 15 minutos para hablar de qué funcionó y qué necesitan ajustar." },
     ],
-    week: "Protejan una conversación de 20 minutos, sin pantallas, solo para ponerse al día emocionalmente.",
+    weekPlan: [
+      "Hagan un check-in de cinco minutos: cada uno completa «hoy me siento…».",
+      "Escuchen una historia del día del otro sin interrumpir ni ofrecer soluciones.",
+      "Agradezcan una acción concreta que haya ayudado a la relación esta semana.",
+      "Hablen de una necesidad futura usando «me gustaría…» en lugar de una queja.",
+      "Recuerden un desacuerdo reciente y nombren qué hicieron bien para repararlo.",
+      "Reserven veinte minutos sin pantallas para compartir algo que no suelen conversar.",
+      "Revisen qué momento les hizo sentir más conectados y decidan cómo repetirlo.",
+    ],
   },
   avoidance: {
     title: "Conversaciones postergadas", kicker: "La calma protege, pero algunos temas necesitan espacio",
@@ -50,7 +58,15 @@ const profiles: Record<ProfileKey, {
       { title: "Una frase segura", text: "Practiquen: “Esto me cuesta decirlo y quiero hacerlo sin atacarte”." },
       { title: "Tema pequeño primero", text: "Empiecen por una incomodidad de baja intensidad para entrenar la conversación." },
     ],
-    week: "Elijan un tema pendiente pequeño y conversen durante 10 minutos usando turnos de dos minutos.",
+    weekPlan: [
+      "Cada persona escribe un tema pequeño que ha estado evitando.",
+      "Elijan uno y acuerden una hora concreta para conversarlo, sin abordarlo todavía.",
+      "Inicien con: «Esto me cuesta decirlo y quiero hacerlo sin atacarte».",
+      "Hablen durante diez minutos usando turnos breves y sin interrupciones.",
+      "Cada uno resume lo que entendió y pregunta si lo interpretó correctamente.",
+      "Transformen una queja relacionada con el tema en una petición concreta.",
+      "Revisen qué hizo más segura la conversación y acuerden el siguiente paso.",
+    ],
   },
   defensive: {
     title: "Comunicación defensiva", kicker: "Detrás de la defensa suele haber una necesidad de protección",
@@ -62,7 +78,15 @@ const profiles: Record<ProfileKey, {
       { title: "Reflejar antes de responder", text: "Repitan con sus palabras lo que entendieron y pregunten si es correcto." },
       { title: "Del reproche a la petición", text: "Cambien “tú nunca…” por “me ayudaría que…”." },
     ],
-    week: "Durante un desacuerdo, cada persona hará una sola petición concreta sin explicar quién tuvo la culpa.",
+    weekPlan: [
+      "Identifiquen una señal física que aparece cuando empiezan a ponerse a la defensiva.",
+      "Acuerden una palabra para pedir una pausa sin abandonar la conversación.",
+      "Practiquen escuchar durante dos minutos antes de preparar una respuesta.",
+      "Cambien una frase con «siempre» o «nunca» por «cuando ocurre…, yo siento…».",
+      "Cada persona formula una petición concreta sin explicar quién tuvo la culpa.",
+      "Reconozcan una parte válida de lo que dijo el otro, aunque no estén de acuerdo.",
+      "Revisen qué ayudó a bajar la intensidad y elijan una herramienta para conservar.",
+    ],
   },
   distance: {
     title: "Distancia emocional", kicker: "Reconectar empieza con intercambios pequeños y seguros",
@@ -74,7 +98,15 @@ const profiles: Record<ProfileKey, {
       { title: "Mapa de cercanía", text: "Cada uno escriba qué gesto pequeño le hace sentir acompañado." },
       { title: "Invitación, no exigencia", text: "Prueben: “¿Tienes energía para escucharme cinco minutos?”." },
     ],
-    week: "Elijan un ritual breve de conexión —un café, una caminata o una despedida consciente— y repítanlo tres veces.",
+    weekPlan: [
+      "Compartan durante dos minutos cómo llegan al final del día, sin consejos.",
+      "Cada uno escribe un gesto pequeño que le hace sentirse acompañado.",
+      "Hagan una invitación concreta: «¿Tienes energía para escucharme cinco minutos?».",
+      "Recuerden un momento reciente en el que se sintieron cerca y qué lo hizo posible.",
+      "Elijan un ritual breve de conexión: un café, una caminata o una despedida consciente.",
+      "Repitan el ritual y añadan una pregunta que no sea sobre tareas o pendientes.",
+      "Revisen qué acercamiento se sintió más natural y acuerden repetirlo la próxima semana.",
+    ],
   },
 };
 
@@ -169,7 +201,7 @@ export default function Home() {
           <div><p className="eyebrow">Desbloquea tu informe</p><h2>Recibe el resultado completo aquí mismo</h2><p>Deja tu correo para acceder a las señales, los ejercicios y tu recomendación personalizada. No enviaremos ningún correo y no guardamos tus respuestas.</p></div>
           <form onSubmit={unlockReport}><label htmlFor="email">Tu correo</label><div className="input-row"><input id="email" type="email" required placeholder="nombre@correo.com" value={email} onChange={e => setEmail(e.target.value)} /><button disabled={sendState === "loading"}>{sendState === "loading" ? "Guardando…" : "Ver informe completo"}</button></div><label className="check"><input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} /> Quiero recibir información sobre recursos y consultas en el futuro. Es opcional.</label>{sendState === "error" && <p className="error">No pudimos guardar el dato ahora. Inténtalo nuevamente.</p>}</form>
         </div>}
-        {sendState === "success" && <><div className="exercises"><p className="eyebrow">Tres ejercicios para empezar</p><div>{result.exercises.map((x, i) => <article key={x.title}><b>0{i + 1}</b><h3>{x.title}</h3><p>{x.text}</p></article>)}</div></div><div className="week"><span>Tu recomendación para los próximos 7 días</span><p>{result.week}</p></div><div className="success"><b>✓ Informe completo desbloqueado</b><p>Tu correo quedó registrado. No te enviaremos el informe ni mensajes promocionales salvo que hayas marcado el consentimiento opcional.</p></div></>}
+        {sendState === "success" && <><div className="exercises"><p className="eyebrow">Tres ejercicios para empezar</p><div>{result.exercises.map((x, i) => <article key={x.title}><b>0{i + 1}</b><h3>{x.title}</h3><p>{x.text}</p></article>)}</div></div><div className="week"><span>Tu plan para los próximos 7 días</span><ol>{result.weekPlan.map((action, index) => <li key={action}><b>Día {index + 1}</b><p>{action}</p></li>)}</ol></div><div className="success"><b>✓ Informe completo desbloqueado</b><p>Tu correo quedó registrado. No te enviaremos el informe ni mensajes promocionales salvo que hayas marcado el consentimiento opcional.</p></div></>}
         <button className="restart" onClick={begin}>Volver a realizar el diagnóstico</button>
       </section>}
 
