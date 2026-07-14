@@ -2,7 +2,7 @@
 
 Diagnóstico orientativo de comunicación en pareja creado para el reto **La forma más creativa de capturar leads**.
 
-La persona responde 10 preguntas breves, descubre su perfil de comunicación y recibe valor antes de entregar información. Después puede dejar su correo para desbloquear señales, tres ejercicios prácticos y una recomendación personalizada para los próximos siete días. El lead se guarda realmente en Supabase.
+La persona responde 10 preguntas breves, descubre su perfil de comunicación y recibe valor antes de entregar información. Después puede dejar su correo para desbloquear señales, tres ejercicios prácticos y un plan personalizado con una acción para cada uno de los próximos siete días. El lead se guarda realmente en Supabase.
 
 ## Perfiles
 
